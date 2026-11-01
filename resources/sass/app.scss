@@ -1,0 +1,21 @@
+// Fonts
+@import url(https://fonts.bunny.net/css?family=poppins:400,500,600,700,800|urbanist:400,500,600,700|plus-jakarta-sans:400,500,600,700,800|bricolage-grotesque:500,600,700,800);
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+@import 'landing';
+
+@import "./mazer";
+
+// Fresh theme (redesign)
+@import "./fresh";
+
+// Lumora layer (landing gelap + 3D, logo, preloader)
+@import "./lumora";
+
+// Lapisan Tabanan (about Jatiluwih, bento, halaman publik, gapura login 3D)
+@import "./tabanan";

@@ -1,0 +1,16 @@
+.git
+.github
+.idea
+.vscode
+.codex-tmp-render
+.env
+node_modules
+vendor
+public/build
+public/hot
+storage/logs
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+npm-debug.log
+yarn-error.log

@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('form_reklames', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('reklame_id')->constrained('reklames');
+            $table->string('label');
+            $table->string('tipe');
+            $table->string('kode_isian');
+            $table->text('value')->nullable();
+            $table->integer('urutan')->default(0);
+            $table->softDeletes();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('form_reklames');
+    }
+};

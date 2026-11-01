@@ -1,0 +1,4 @@
+@extends('layouts.landing.auth-base')
+@section('content')
+<main class="sa-login-page"><section class="sa-login-visual"><div class="sa-login-visual__wash"></div><div class="sa-login-visual__content"><span class="sa-login-logo"><img src="{{ asset('assets/images/siap-aum/siap-aum-mark.svg') }}" alt=""></span><h1>Akun berhasil<br>didaftarkan</h1><p>Selamat bergabung di layanan perizinan online Kabupaten Tabanan.</p></div></section><section class="sa-login-panel"><div class="sa-login-card sa-auth-status"><span class="sa-auth-status__icon"><i class="isax isax-tick-circle"></i></span><span class="sa-eyebrow"><i></i>Pendaftaran selesai</span><h2>Periksa email Anda</h2><p>Akun telah berhasil dibuat. Informasi aktivasi dan pemberitahuan berikutnya akan dikirimkan melalui email terdaftar.</p><a class="sa-login-submit" href="{{ route('login.index') }}">Kembali ke Login</a></div></section></main>
+@endsection

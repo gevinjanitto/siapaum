@@ -1,0 +1,4 @@
+@extends('layouts.landing.auth-base')
+@section('content')
+<main class="sa-login-page"><section class="sa-login-visual"><div class="sa-login-visual__wash"></div><div class="sa-login-visual__content"><span class="sa-login-logo"><img src="{{ asset('assets/images/siap-aum/siap-aum-mark.svg') }}" alt=""></span><h1>Password berhasil<br>diperbarui</h1><p>Akun Anda kembali aman dan siap digunakan.</p></div></section><section class="sa-login-panel"><div class="sa-login-card sa-auth-status"><span class="sa-auth-status__icon"><i class="isax isax-shield-tick"></i></span><span class="sa-eyebrow"><i></i>Berhasil</span><h2>Password telah diganti</h2><p>Silakan masuk kembali menggunakan password baru Anda. Jangan membagikan password kepada siapa pun.</p><a class="sa-login-submit" href="{{ route('login.index') }}">Masuk ke SIAP AUM</a></div></section></main>
+@endsection

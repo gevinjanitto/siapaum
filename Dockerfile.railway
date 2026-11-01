@@ -1,0 +1,54 @@
+# Image produksi untuk Railway (Apache + PHP 8.3, asset Vite dibuild di dalam image)
+FROM node:20-bookworm-slim AS assets
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY vite.config.js ./
+COPY resources ./resources
+RUN npm run build
+
+FROM php:8.3-apache-bookworm
+
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    HOME=/tmp \
+    APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        curl git unzip \
+        libfreetype6-dev libicu-dev libjpeg62-turbo-dev libpng-dev libzip-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j"$(nproc)" bcmath exif gd intl opcache pdo_mysql zip \
+    && { a2dismod -f mpm_event mpm_worker || true; } \
+    && a2enmod mpm_prefork rewrite headers \
+    && sed -ri 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
+    && sed -ri 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
+    && printf '<Directory /var/www/html/public>\n    AllowOverride All\n    Require all granted\n</Directory>\n' > /etc/apache2/conf-available/laravel.conf \
+    && a2enconf laravel \
+    && printf 'upload_max_filesize=20M\npost_max_size=25M\nmemory_limit=256M\nmax_execution_time=120\nopcache.enable=1\n' > /usr/local/etc/php/conf.d/app.ini \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# LibreOffice tanpa GUI & tanpa Java (cukup untuk konversi surat .docx -> PDF), unduhan jauh lebih kecil
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libreoffice-writer-nogui \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction --prefer-dist --no-scripts --no-progress --optimize-autoloader
+
+COPY . .
+COPY --from=assets /app/public/build ./public/build
+RUN rm -f public/hot public/storage \
+    && mkdir -p storage/app/public storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && composer dump-autoload --optimize \
+    && php artisan package:discover --ansi \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod +x docker/railway/entrypoint.sh
+
+EXPOSE 8080
+ENTRYPOINT ["docker/railway/entrypoint.sh"]
+CMD ["apache2-foreground"]
